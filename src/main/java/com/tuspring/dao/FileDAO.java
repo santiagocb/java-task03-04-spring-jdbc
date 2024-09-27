@@ -1,12 +1,14 @@
 package com.tuspring.dao;
 
 import com.tuspring.FileData;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.List;
 
+@Repository
 public class FileDAO {
 
     private final DataSource dataSource;
@@ -16,9 +18,11 @@ public class FileDAO {
     }
 
     public void saveFile(String fileName, long fileSize, InputStream fileData) throws SQLException {
-        String sql = "call save_file(?, ?, ?)";
+
+        String SAVE_FILE_SQL = "call save_file(?, ?, ?)";
+
         try (Connection conn = dataSource.getConnection();
-             CallableStatement stmt = conn.prepareCall(sql)) {
+             CallableStatement stmt = conn.prepareCall(SAVE_FILE_SQL)) {
 
             stmt.setString(1, fileName);
             stmt.setLong(2, fileSize);
@@ -28,23 +32,31 @@ public class FileDAO {
         }
     }
 
-    public void retrieveFile(long fileId) {
-        String sql = "call get_file(?)";
+    public FileData retrieveFile(long fileId) {
+
+        FileData file = null;
+        String GET_FILE_SQL = "SELECT * FROM get_file(?)";
+
         try (Connection conn = dataSource.getConnection();
-             CallableStatement stmt = conn.prepareCall("SELECT * FROM get_file(?)")) {
+             PreparedStatement stmt = conn.prepareStatement(GET_FILE_SQL)) {
 
-            stmt.setLong(1, 1);  // Replace 1 with a valid file ID
+            stmt.setLong(1, fileId);
 
-            stmt.execute();
-
-            System.out.println("File Name: " + stmt.getString(2));
-            System.out.println("File Size: " + stmt.getLong(3));
-
-            byte[] fileDataBytes = stmt.getBytes(4);
-            System.out.println("File Data: " + (fileDataBytes != null ? "Retrieved successfully" : "No data"));
+            ResultSet resultSet = stmt.executeQuery();
+            while(resultSet.next()) {
+                String fileName = resultSet.getString(1);
+                long fileSize = resultSet.getLong(2);
+                InputStream fileData = resultSet.getBinaryStream(3);
+                file = new FileData(fileName, fileSize, fileData);
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return file;
+    }
+
+    public List<String> getAllFileIds() {
+        throw new UnsupportedOperationException();
     }
 }

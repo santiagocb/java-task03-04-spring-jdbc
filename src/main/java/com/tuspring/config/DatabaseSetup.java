@@ -15,10 +15,10 @@ public class DatabaseSetup {
     public void createTables() {
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS FileShare (" +
                 "id BIGSERIAL PRIMARY KEY, " +
-                "file_name VARCHAR(255), " +
-                "file_size BIGINT, " +
-                "upload_time TIMESTAMP DEFAULT NOW(), " +
-                "file_data BYTEA)");
+                "fileName VARCHAR(255), " +
+                "fileSize BIGINT, " +
+                "uploadTime TIMESTAMP DEFAULT NOW(), " +
+                "fileData BYTEA)");
     }
 
     public void dropTables() {

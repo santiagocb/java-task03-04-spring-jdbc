@@ -1,21 +1,19 @@
 import com.tuspring.FileData;
 import com.tuspring.config.ApplicationConfig;
 import com.tuspring.config.DatabaseSetup;
-import com.tuspring.dao.FileDAO;
+import com.tuspring.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import javax.sql.DataSource;
-import java.io.*;
+import java.io.IOException;
 import java.sql.SQLException;
 
 
 public class Main {
-
     public static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, IOException {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
@@ -23,45 +21,28 @@ public class Main {
         dbSetUp.dropTables();
         dbSetUp.createTables();
 
-        // Step 2: Create FileDAO instance
-        FileDAO fileDAO = new FileDAO(context.getBean(DataSource.class));
+        FileService fileService = context.getBean(FileService.class);
 
-        // Step 3: Save a file to the database
-        try (InputStream inputFile = new FileInputStream("file.txt")) {
-            String fileName = "file.txt";
-            long fileSize = new File("file.txt").length();
+        String lightWeightFilePath = "files/lightweight-file.txt";
 
-            // Save the file using the DAO
-            fileDAO.saveFile(fileName, fileSize, inputFile);
-            logger.info(String.format("File %s [%s] saved successfully!", fileName, fileSize));
-        } catch (IOException | SQLException e) {
-            throw new RuntimeException(e);
-        }
+        String heavyFilePath = "files/heavy-file.dmg";
 
-        // Step 4: Retrieve file from the database and show its metadata and first few lines
+        // Storing and reading lightweight file
+        fileService.storeFile(lightWeightFilePath);
 
-        long fileId = 1;  // Change this to the ID of the file you want to retrieve
-        fileDAO.retrieveFile(fileId);
+        FileData lightFileData = fileService.fetchFileById(1);
+        logger.info(String.format("Lightweight file name: %s", lightFileData.getFileName()));
+        logger.info(String.format("Lightweight file size: %s bytes", lightFileData.getFileSize()));
+        fileService.showFileFirstLine(lightFileData);
 
-        /*
-        // Show file metadata
-        System.out.println("File Name: " + fileData.getFileName());
-        System.out.println("File Size: " + fileData.getFileSize() + " bytes");
+        // Storing and reading heavy file
+        fileService.storeFile(heavyFilePath);
 
-        // Show the first few lines of the file (if it's a text file)
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(fileData.getFileData(), "UTF-8"))) {
+        FileData heavyFileData = fileService.fetchFileById(2);
+        logger.info(String.format("Heavy file name: %s", heavyFileData.getFileName()));
+        logger.info(String.format("Heavy file size: %s bytes", heavyFileData.getFileSize()));
+        fileService.showFileFirstLine(heavyFileData);
 
-            String line;
-            int lineCount = 0;
-            while ((line = reader.readLine()) != null && lineCount < 5) {
-                System.out.println(line);
-                lineCount++;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-         */
         context.close();
     }
 }

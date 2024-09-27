@@ -2,11 +2,9 @@
 The target of this exercise is to practice Spring JDBC with Java 17.
 
 ## Features
-- CRUD of user project mixing Stored procedures and common SQL statements.
-- Generate data in memory and INSERT batches through Stored procedures.
-- Specific SELECT with JOINs to print out all names (only distinct) of users who has more than average friends and 100 likes in the last month USING stored function.
-- Specific SELECT with JOINs to print out all names (only distinct) of users who has more than average friends and 100 likes in the last month USING SQL statement.
-- Check difference between both approaches (With Store function is faster in each run).
+- Store and retrieve file from Database through Stored procedures.
+- Store and retrieve files up to 200MB of size.
+- Sample files are in `/files` folder.
 
 ## Requirements
 - Install Docker
