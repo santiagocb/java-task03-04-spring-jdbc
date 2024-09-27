@@ -19,3 +19,6 @@ The target of this exercise is to practice Spring JDBC with Java 17.
 4. Sample files are in `/files` folder. Due to size restrictions, heavy file is not uploaded to the repository. So, to run this project locally, please move a heavy file inside `/files` folder with its proper extension.
 5. Run Main program.
 6. Run command to stop Docker execution: `docker stop lil-postgres`
+
+## Output
+![Screenshot 2024-09-26 at 10 16 25 PM](https://github.com/user-attachments/assets/8df92d5d-6f0e-4a38-bc84-a5888871fa2e)
