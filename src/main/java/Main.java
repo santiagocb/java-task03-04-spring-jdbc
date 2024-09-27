@@ -8,6 +8,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 
 public class Main {
@@ -23,25 +24,30 @@ public class Main {
 
         FileService fileService = context.getBean(FileService.class);
 
-        String lightWeightFilePath = "files/lightweight-file.txt";
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter a the name of the heavy file with its corresponding extension: ");
+        String heavyFileName = scanner.nextLine();
 
-        String heavyFilePath = "files/heavy-file.dmg";
+        String filePathPrefix = "files/";
+
+        String lightWeightFilePath = filePathPrefix + "lightweight-file.txt";
+        String heavyFilePath = filePathPrefix + heavyFileName;
 
         // Storing and reading lightweight file
         fileService.storeFile(lightWeightFilePath);
 
         FileData lightFileData = fileService.fetchFileById(1);
-        logger.info(String.format("Lightweight file name: %s", lightFileData.getFileName()));
-        logger.info(String.format("Lightweight file size: %s bytes", lightFileData.getFileSize()));
-        fileService.showFileFirstLine(lightFileData);
+        logger.info(String.format("[1] File name: %s", lightFileData.getFileName()));
+        logger.info(String.format("[1] File size: %s bytes", lightFileData.getFileSize()));
+        fileService.showFileFirstLines(lightFileData);
 
         // Storing and reading heavy file
         fileService.storeFile(heavyFilePath);
 
         FileData heavyFileData = fileService.fetchFileById(2);
-        logger.info(String.format("Heavy file name: %s", heavyFileData.getFileName()));
-        logger.info(String.format("Heavy file size: %s bytes", heavyFileData.getFileSize()));
-        fileService.showFileFirstLine(heavyFileData);
+        logger.info(String.format("[2] File name: %s", heavyFileData.getFileName()));
+        logger.info(String.format("[2] File size: %s bytes", heavyFileData.getFileSize()));
+        fileService.showFileFirstLines(heavyFileData);
 
         context.close();
     }
