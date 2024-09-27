@@ -2,8 +2,10 @@
 The target of this exercise is to practice Spring JDBC with Java 17.
 
 ## Features
-- Store and retrieve file from Database through Stored procedures.
+- Store and retrieve files from Database through Stored procedures.
 - Store and retrieve files up to 200MB of size.
+- Store and retrieve light and heavy files.
+- Heavy file is provided by the user in the `/files` folder and its name is also provided in runtime.
 
 ## Requirements
 - Install Docker
